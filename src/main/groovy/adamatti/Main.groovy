@@ -21,11 +21,11 @@ class Main {
 	private static ConfigObject cfg = ConfigHelper.cfg
 
 	static void main(String [] args){
-		log.info "Starting"
+		log.info "Starting the application"
 		startSpark(cfg.web.port as int)
 
 		SpringApplication.run(Main.class)
-		log.info "Started"
+		log.info "Application started successfully"
 	}
 
 }
