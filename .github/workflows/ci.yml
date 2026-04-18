@@ -81,3 +81,24 @@ jobs:
       - name: Stop services
         if: always()
         run: docker compose down
+
+  deployment:
+    runs-on: ubuntu-latest
+    needs: [build, test]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t sampletalkcicd .
+
+      - name: Run application using Docker Compose
+        run: docker compose up -d
+
+      - name: Show running containers
+        run: docker ps
+
+      - name: Stop containers
+        if: always()
+        run: docker compose down
