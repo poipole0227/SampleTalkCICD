@@ -20,10 +20,12 @@ jobs:
           distribution: temurin
           java-version: "8"
 
-      - name: Set up Gradle
+      - name: Set up Gradle 4.10.3
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 4.10.3
 
-      - name: Build project
+      - name: Build (without tests)
         run: gradle clean assemble
 
       - name: Upload build artifacts
@@ -46,8 +48,10 @@ jobs:
           distribution: temurin
           java-version: "8"
 
-      - name: Set up Gradle
+      - name: Set up Gradle 4.10.3
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 4.10.3
 
       - name: Run unit tests
         run: gradle test
@@ -57,17 +61,3 @@ jobs:
         with:
           name: test-reports
           path: build/reports/tests/**
-
-  deployment:
-    runs-on: ubuntu-latest
-    needs: [build, test]
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build Docker image
-        run: docker build -t sampletalkcicd .
-
-      - name: Verify docker-compose file exists
-        run: ls -l docker-compose.yml
