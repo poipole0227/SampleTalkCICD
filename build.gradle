@@ -1,6 +1,7 @@
 apply plugin: "idea"
 apply plugin: "groovy"
 apply plugin: "application"
+apply plugin: "jacoco"
 
 applicationName = "sample"
 mainClassName = "adamatti.Main"
@@ -51,5 +52,17 @@ idea {
                 }
             }
         }
+    }
+}
+jacoco {
+    toolVersion = "0.8.8"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.enabled true
+        html.enabled true
+        csv.enabled false
     }
 }
