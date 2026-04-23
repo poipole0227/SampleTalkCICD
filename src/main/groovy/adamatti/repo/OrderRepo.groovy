@@ -13,32 +13,65 @@ class OrderRepo {
 	@Autowired
 	private MongoTemplate mongoTemplate
 
-	List list(Map mapCriteria = [:]) {
+	/**
+	 * List orders with optional criteria and pagination
+	 */
+	List list(Map mapCriteria = [:], int skip = 0, int limit = 0) {
 		Criteria criteria = toCriteria(mapCriteria)
-		list(criteria)
+		Query query = new Query(criteria)
+		
+		if (skip > 0) query.skip(skip)
+		if (limit > 0) query.limit(limit)
+		
+		mongoTemplate.find(query, Map.class, COLLECTION_NAME)
+	}
+
+	/**
+	 * Get single order by ID
+	 */
+	Map findById(String id) {
+		mongoTemplate.findById(id, Map.class, COLLECTION_NAME)
+	}
+
+	/**
+	 * Count orders matching criteria
+	 */
+	long count(Map mapCriteria = [:]) {
+		Criteria criteria = toCriteria(mapCriteria)
+		Query query = new Query(criteria)
+		mongoTemplate.count(query, COLLECTION_NAME)
 	}
 
 	private Criteria toCriteria(Map map) {
-		Criteria criteria = new Criteria()
-
-		map.each {k, v ->
-			criteria = criteria.and(k).is(v)
+		if (map.isEmpty()) {
+			return new Criteria()
 		}
-
-		criteria
+		
+		// Build criteria using fold to avoid reassignment
+		map.inject(new Criteria()) { criteria, k, v ->
+			criteria.and(k).is(v)
+		}
 	}
 
-	List list(Criteria criteria){
-		Query query = new Query(criteria)
-		list(query)
-	}
-
-	List list(Query query){
-		mongoTemplate.find(query,Map.class,COLLECTION_NAME)
-	}
-
-	Map save(Map entity){
-		mongoTemplate.save(entity,COLLECTION_NAME)
+	Map save(Map entity) {
+		mongoTemplate.save(entity, COLLECTION_NAME)
 		entity
+	}
+
+	/**
+	 * Batch insert multiple orders for better performance
+	 */
+	List saveBatch(List<Map> entities) {
+		mongoTemplate.insert(entities, COLLECTION_NAME)
+		entities
+	}
+
+	/**
+	 * Delete orders matching criteria
+	 */
+	long deleteByQuery(Map mapCriteria) {
+		Criteria criteria = toCriteria(mapCriteria)
+		Query query = new Query(criteria)
+		mongoTemplate.remove(query, COLLECTION_NAME).deletedCount
 	}
 }
