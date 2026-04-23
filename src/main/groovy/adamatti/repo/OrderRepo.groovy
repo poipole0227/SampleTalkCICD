@@ -19,7 +19,13 @@ class OrderRepo {
 	}
 
 	private Criteria toCriteria(Map map) {
-		map.inject(new Criteria()) { criteria, k, v -> criteria.and(k).is(v) }
+		Criteria criteria = new Criteria()
+
+		map.each {k, v ->
+			criteria = criteria.and(k).is(v)
+		}
+
+		criteria
 	}
 
 	List list(Criteria criteria){
