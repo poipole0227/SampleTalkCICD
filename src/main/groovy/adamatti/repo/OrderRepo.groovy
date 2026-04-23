@@ -31,6 +31,10 @@ class OrderRepo {
 		mongoTemplate.find(query,Map.class,COLLECTION_NAME)
 	}
 
+	Map findById(String id) {
+		mongoTemplate.findById(id, Map.class, COLLECTION_NAME)
+	}
+
 	Map save(Map entity){
 		mongoTemplate.save(entity,COLLECTION_NAME)
 		entity
