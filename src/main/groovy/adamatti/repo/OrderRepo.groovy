@@ -19,13 +19,7 @@ class OrderRepo {
 	}
 
 	private Criteria toCriteria(Map map) {
-		Criteria criteria = new Criteria()
-
-		map.each {k, v ->
-			criteria = criteria.and(k).is(v)
-		}
-
-		criteria
+		map.inject(new Criteria()) { criteria, k, v -> criteria.and(k).is(v) }
 	}
 
 	List list(Criteria criteria){
@@ -35,6 +29,10 @@ class OrderRepo {
 
 	List list(Query query){
 		mongoTemplate.find(query,Map.class,COLLECTION_NAME)
+	}
+
+	Map findById(String id) {
+		mongoTemplate.findById(id, Map.class, COLLECTION_NAME)
 	}
 
 	Map save(Map entity){
