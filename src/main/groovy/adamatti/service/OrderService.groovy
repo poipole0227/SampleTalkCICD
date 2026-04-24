@@ -28,7 +28,7 @@ class OrderService extends SpringRouteBuilder implements Processor{
 	void process(Exchange exchange) throws Exception {
 		Map order = exchange.in.body
 
-		log.info "Order received: ${order}"
+		log.info "Order received and starting to process: ${order}"
 
 		orderRepo.save(order)
 
